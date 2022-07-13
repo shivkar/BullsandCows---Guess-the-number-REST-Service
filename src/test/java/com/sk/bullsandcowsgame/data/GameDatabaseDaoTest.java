@@ -8,18 +8,19 @@ package com.sk.bullsandcowsgame.data;
 import com.sk.bullsandcowsgame.model.Game;
 import com.sk.bullsandcowsgame.model.Round;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+// import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  *
@@ -32,32 +33,29 @@ public class GameDatabaseDaoTest {
     @Autowired
     GameDao gameDao;
     @Autowired
-    RoundDao roundDao ;
+    RoundDao roundDao;
 
     public GameDatabaseDaoTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
+    @BeforeEach
     public void setUp() {
 
-      /*  List<Game> games = gameDao.getAllGames();
+        List<Game> games = gameDao.getAllGames();
         for (Game game : games) {
-            gameDao.deleteGame(game.getGameId());
-        }*/
 
-       
+            gameDao.deleteGame(game.getGameId());
+        }
+
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
+
+        List<Game> games = gameDao.getAllGames();
+        for (Game game : games) {
+            gameDao.deleteGame(game.getGameId());
+        }
     }
 
     /**
@@ -66,12 +64,12 @@ public class GameDatabaseDaoTest {
     @Test
     public void testGetAllGames() {
         Game game = new Game();
-        game.setAnswer("2971");
+        game.setAnswer("1234");
         game.setFinished(false);
         gameDao.addGame(game);
 
         Game game2 = new Game();
-        game2.setAnswer("9218");
+        game2.setAnswer("5467");
         game2.setFinished(false);
         gameDao.addGame(game2);
 
@@ -88,7 +86,7 @@ public class GameDatabaseDaoTest {
     @Test
     public void testAddGetGame() {
         Game game = new Game();
-        game.setAnswer("1234");
+        game.setAnswer("1648");
         game.setFinished(false);
         game = gameDao.addGame(game);
 
@@ -103,7 +101,7 @@ public class GameDatabaseDaoTest {
     @Test
     public void testUpdateGame() {
         Game game = new Game();
-        game.setAnswer("1234");
+        game.setAnswer("1648");
         game.setFinished(false);
         game = gameDao.addGame(game);
 
@@ -127,6 +125,22 @@ public class GameDatabaseDaoTest {
      */
     @Test
     public void testDeleteGame() {
+
+        Game game = new Game();
+        game.setAnswer("1648");
+        game.setFinished(false);
+        game = gameDao.addGame(game);
+
+        Round round = new Round();
+        round.setGuess("1234");
+        round.setResult("e:0:p:0");
+        
+
+        gameDao.deleteGame(game.getGameId());
+
+        Game fromDao = gameDao.getGameById(game.getGameId());
+
+        assertNull(fromDao);
     }
 
 }

@@ -83,10 +83,12 @@ public class GameDatabaseDao implements GameDao {
      @Transactional
     public void deleteGame(int gameId) {
         
-          final String DELETE_ROUND_BY_GAME = "DELETE GAME * FROM ROUND "
-                + "JOIN round ON round.gameId = game.gameId WHERE round.gameId = ?";
+          final String DELETE_ROUND_BY_GAME = "DELETE FROM round WHERE gameId =?; ";
+//                + "JOIN round ON round.gameId = game.gameId WHERE round.gameId = ?";
         jdbc.update(DELETE_ROUND_BY_GAME, gameId);
         
+        
+       
       /*  final String DELETE_GAME_BY_GAME= "DELETE FROM game WHERE gameid = ?";
         jdbc.update(DELETE_GAME_BY_GAME, gameId);*/
         

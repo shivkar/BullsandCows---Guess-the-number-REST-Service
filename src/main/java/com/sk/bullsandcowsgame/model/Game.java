@@ -5,6 +5,8 @@
  */
 package com.sk.bullsandcowsgame.model;
 
+import java.util.Objects;
+
 /**
  *
  * @author SHIVALI
@@ -52,6 +54,39 @@ public class Game {
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Game other = (Game) obj;
+        if (this.gameId != other.gameId) {
+            return false;
+        }
+        if (this.finished != other.finished) {
+            return false;
+        }
+        if (!Objects.equals(this.answer, other.answer)) {
+            return false;
+        }
+        return true;
+    }
     
-    
+   @Override
+    public String toString() {
+        return "Game{" + "gameId=" + gameId + ", answer=" + answer + ", finished=" + finished + '}';
+    }  
 }

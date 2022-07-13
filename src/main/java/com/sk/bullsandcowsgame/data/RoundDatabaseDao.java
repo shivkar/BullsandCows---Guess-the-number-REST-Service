@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,20 +28,19 @@ public class RoundDatabaseDao implements RoundDao {
     @Autowired
     JdbcTemplate jdbc;
 
-    @Override
-    public void deleteRound(int roundId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
+
+   
 
     public static final class RoundMapper implements RowMapper<Round> {
 
         @Override
         public Round mapRow(ResultSet rs, int index) throws SQLException {
             Round round = new Round();
-            round.setRoundId(rs.getInt("round_id"));
+            round.setRoundId(rs.getInt("roundid"));
             round.setGameId(rs.getInt("gameid"));
             round.setGuess(rs.getString("guess"));
-            Timestamp timestamp = rs.getTimestamp("guess_time");
+            Timestamp timestamp = rs.getTimestamp("guesstime");
             round.setGuessTime(timestamp.toLocalDateTime());
             round.setResult(rs.getString("result"));
             return round;
@@ -52,7 +52,7 @@ public class RoundDatabaseDao implements RoundDao {
         
         try {
         final String SELECT_ROUNDS_BY_GAMEID = "SELECT * FROM round "
-                + "WHERE gameid = ? ORDER BY guess_time";
+                + "WHERE gameid = ?; ";
         List<Round> rounds = jdbc.query(SELECT_ROUNDS_BY_GAMEID, new RoundMapper(), gameId);
         return rounds;
         } catch(DataAccessException ex) {
@@ -65,7 +65,7 @@ public class RoundDatabaseDao implements RoundDao {
     public Round getRoundById(int roundId) {
         
         try {
-            final String SELECT_ROUND_BY_ID = "SELECT * FROM round WHERE round_id = ?";
+            final String SELECT_ROUND_BY_ID = "SELECT * FROM round WHERE roundid = ?";
             return jdbc.queryForObject(SELECT_ROUND_BY_ID, new RoundMapper(), roundId);
         } catch(DataAccessException ex) {
             return null;
@@ -78,13 +78,22 @@ public class RoundDatabaseDao implements RoundDao {
     public Round addRound(Round round) {
         
         final String INSERT_ROUND = "INSERT INTO round(gameid, guess, result) VALUES(?,?,?)";
-        jdbc.update(INSERT_ROUND, round.getGameId(), round.getGuess(), round.getResult());
+        jdbc.update(INSERT_ROUND, 
+                round.getGameId(), 
+                round.getGuess(), 
+                round.getResult());
         
         int newRoundId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
         round.setRoundId(newRoundId);
-        return getRoundById(newRoundId);
+//        return getRoundById(newRoundId);
+          return round;
         
-        
+    }
+    
+    @Override
+    public void deleteRound(int roundId) {
+         final String DELETE_ROUND = "DELETE FROM round WHERE roundId = ?";
+        jdbc.update(DELETE_ROUND, roundId);
     }
 
 }
