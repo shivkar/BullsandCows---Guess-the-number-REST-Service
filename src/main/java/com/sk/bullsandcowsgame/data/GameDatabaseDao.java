@@ -26,11 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class GameDatabaseDao implements GameDao { 
     
-    
+    //@Autowired annotation asks Spring to give us that bean so we can use it in our App class.
     @Autowired
     JdbcTemplate jdbc;
     
      // added GameMapper so as to convert database data into Game object .
+    //We use RowMapper to turn a row of the ResultSet into an object.
+    //We declare this as a private static final class so that it is only 
+    // accessible from this class and it can't be changed or re-overridden in any way.
     
     public static final class GameMapper implements RowMapper<Game> {
         
@@ -55,18 +58,19 @@ public class GameDatabaseDao implements GameDao {
        try {
             final String SELECT_GAME_BY_ID = "SELECT * FROM game WHERE gameid = ?";
             return jdbc.queryForObject(SELECT_GAME_BY_ID, new GameMapper(), gameId);
+     //We are also surrounding the call in a try-catch since "queryForObject" will throw an Exception if no object is returned from the query.
         } catch(DataAccessException ex) {
             return null;
         }
     }
 
     @Override
-    @Transactional
+    @Transactional //  @Transactional annotation means every query run against the database in this method is part of a single transaction, so if any of the queries fail, the program will roll back all of them
     public Game addGame(Game game) {
        final String INSERT_GAME = "INSERT INTO game(answer) VALUES (?)";
         jdbc.update(INSERT_GAME, game.getAnswer());
         
-        int newGameId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+        int newGameId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class); // LAST_INSERT_ID() is a function built into MySQL that returns the ID of the most recent row inserted into the database
         game.setGameId(newGameId);
         return game;
     }
@@ -80,7 +84,7 @@ public class GameDatabaseDao implements GameDao {
     }
 
      @Override
-     @Transactional
+     @Transactional //  LAST_INSERT_ID() is a function built into MySQL that returns the ID of the most recent row inserted into the database
     public void deleteGame(int gameId) {
         
           final String DELETE_ROUND_BY_GAME = "DELETE FROM round WHERE gameId =?; ";
@@ -89,8 +93,6 @@ public class GameDatabaseDao implements GameDao {
         
         
        
-      /*  final String DELETE_GAME_BY_GAME= "DELETE FROM game WHERE gameid = ?";
-        jdbc.update(DELETE_GAME_BY_GAME, gameId);*/
         
         final String DELETE_GAME = "DELETE FROM game WHERE gameId = ?";
         jdbc.update(DELETE_GAME, gameId);

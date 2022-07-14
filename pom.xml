@@ -18,7 +18,10 @@
     <relativePath />
 </parent>
 <dependencies> 
-    <!--Spring Boot starter children. No versions needed.-->   
+    <!--Spring Boot starter children. No versions needed.
+    Spring Boot uses properties files for
+    any additional configuration that is necessary, 
+    and when we connect to a database, we must define the location of that database-->   
     
     <!--Enables and configures Spring MVC. -->     
     <dependency>

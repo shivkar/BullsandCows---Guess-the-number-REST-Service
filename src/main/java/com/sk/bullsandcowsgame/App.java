@@ -14,8 +14,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  *
  * @author SHIVALI
  */
-@ExtendWith(SpringExtension.class)
-@SpringBootApplication
+
+//  @SpringBootApplication annotation is what causes Spring to start identifying components to initialize and initialize the base configuration of everything. It wraps several other annotations into a single annotation, so we typically see it whenever we have a Spring Boot app
+@ExtendWith(SpringExtension.class)// @ExtendWith annotation sets up what is handling running the tests behind the scenes.
+@SpringBootApplication // to avoid commandlinerunner class and testapplication class .
 public class App  {
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
